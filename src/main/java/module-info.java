@@ -6,7 +6,12 @@ module org.example.criesandhope {
     requires com.dlsc.formsfx;
     requires org.kordamp.bootstrapfx.core;
     requires static lombok;
+    requires jakarta.persistence;
+    requires javafx.graphics;
+    requires org.example.criesandhope;
 
     opens org.example.criesandhope to javafx.fxml;
     exports org.example.criesandhope;
+    exports org.example.criesandhope.fxController;
+    opens org.example.criesandhope.fxController to javafx.fxml;
 }
