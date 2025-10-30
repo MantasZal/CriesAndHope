@@ -8,7 +8,6 @@ module org.example.criesandhope {
     requires static lombok;
     requires jakarta.persistence;
     requires javafx.graphics;
-    requires org.example.criesandhope;
 
     opens org.example.criesandhope to javafx.fxml;
     exports org.example.criesandhope;
