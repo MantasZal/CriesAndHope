@@ -1,14 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.criesandhope.fxController.UserForm"
-            prefHeight="400.0" prefWidth="600.0">
-
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.criesandhope.fxController.UserForm">
+   <children>
+      <Pane layoutX="67.0" layoutY="49.0" prefHeight="302.0" prefWidth="481.0">
+         <children>
+            <RadioButton fx:id="userRadio" layoutX="22.0" layoutY="24.0" mnemonicParsing="false" onAction="#disableFields" selected="true" text="User">
+               <toggleGroup>
+                  <ToggleGroup fx:id="usertType" />
+               </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="driverRadio" layoutX="109.0" layoutY="24.0" mnemonicParsing="false" onAction="#disableFields" text="Driver" toggleGroup="$usertType" />
+            <RadioButton fx:id="restaurantRadio" layoutX="227.0" layoutY="24.0" mnemonicParsing="false" onAction="#disableFields" text="Restaurant" toggleGroup="$usertType" />
+            <RadioButton fx:id="clientRadio" layoutX="374.0" layoutY="24.0" mnemonicParsing="false" onAction="#disableFields" text="Client" toggleGroup="$usertType" />
+            <TextField fx:id="nameField" layoutX="22.0" layoutY="73.0" text="Name" />
+            <TextField fx:id="surnameField" layoutX="22.0" layoutY="114.0" text="Surname" />
+            <TextField fx:id="phoneNumberField" layoutX="22.0" layoutY="157.0" text="Phone number" />
+            <TextField fx:id="loginNameField" layoutX="230.0" layoutY="73.0" text="Login" />
+            <TextField fx:id="passwordField" layoutX="230.0" layoutY="114.0" text="Password" />
+            <TextField fx:id="addressField" layoutX="230.0" layoutY="157.0" text="Address" />
+         </children>
+      </Pane>
+   </children>
 </AnchorPane>

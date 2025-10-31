@@ -1,5 +1,7 @@
 package org.example.criesandhope.fxController;
 
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -13,6 +15,8 @@ import java.io.IOException;
 public class LoginForm {
     public TextField loginField;
     public PasswordField passwordField;
+
+    private EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("CriesAndHope_DB");
 
     public void validateAndLoad() {
     }
