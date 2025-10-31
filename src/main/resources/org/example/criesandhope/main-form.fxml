@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.criesandhope.fxController.MainForm">
+   <children>
+      <TabPane fx:id="tabsPane" prefHeight="400.0" prefWidth="686.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab fx:id="userTab" onSelectionChanged="#reloadTableData" text="User Manigment">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="364.0" prefWidth="725.0">
+                     <children>
+                        <TableView fx:id="userTable" layoutY="14.0" prefHeight="212.0" prefWidth="686.0">
+                          <columns>
+                              <TableColumn fx:id="userTypeColumn" prefWidth="75.0" text="User type" />
+                            <TableColumn fx:id="idColumn" prefWidth="75.0" text="id" />
+                            <TableColumn fx:id="loginColumn" prefWidth="75.0" text="Login" />
+                              <TableColumn fx:id="passwordColumn" prefWidth="75.0" text="Password" />
+                              <TableColumn fx:id="nameColumn" prefWidth="75.0" text="Name" />
+                              <TableColumn fx:id="surnameColumn" prefWidth="75.0" text="Surname" />
+                              <TableColumn fx:id="addressColumn" prefWidth="75.0" text="Address" />
+                              <TableColumn fx:id="phoneNumberColumn" prefWidth="109.5" text="Phone number" />
+                              <TableColumn fx:id="actionColumn" prefWidth="75.0" text="Action" />
+                          </columns>
+                        </TableView>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Untitled Tab 2">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+   </children>
+</AnchorPane>

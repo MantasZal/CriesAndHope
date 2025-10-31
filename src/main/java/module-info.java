@@ -11,8 +11,9 @@ module org.example.criesandhope {
         requires org.controlsfx.controls;
         requires com.dlsc.formsfx;
         requires org.kordamp.bootstrapfx.core;
+    requires javafx.base;
 
-        opens org.example.criesandhope to javafx.fxml, org.hibernate.orm.core, jakarta.persistence;
+    opens org.example.criesandhope to javafx.fxml, org.hibernate.orm.core, jakarta.persistence;
         exports org.example.criesandhope;
         opens org.example.criesandhope.fxController to javafx.fxml;
         exports org.example.criesandhope.fxController;

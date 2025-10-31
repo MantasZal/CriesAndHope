@@ -66,7 +66,6 @@ public class UserForm implements Initializable {
     }
 
     public void createUser(ActionEvent actionEvent) {
-        System.out.println("Creating user...");
 
             User user = new User(loginNameField.getText(), passwordField.getText(), nameField.getText(), surnameField.getText(), phoneNumberField.getText());
             genericHibernate.create(user);
