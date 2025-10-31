@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -19,11 +20,16 @@ public class LoginForm {
     private EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("CriesAndHope_DB");
 
     public void validateAndLoad() {
+
     }
 
     public void registerNewUser() throws IOException {
             FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("user-form.fxml"));
-            Scene scene = new Scene(fxmlLoader.load(), 320, 240);
+            Parent parent = fxmlLoader.load();
+
+            UserForm userForm = fxmlLoader.getController();
+            userForm.setData(entityManagerFactory);
+            Scene scene = new Scene(parent);
             Stage stage = new Stage();
             stage.setTitle("Hello!");
             stage.setScene(scene);
