@@ -42,6 +42,9 @@ public class MainForm implements Initializable {
     public TextField filterSurname;
     public TextField filterAddress;
     public TextField filterPhoneNum;
+    public TableColumn<UserTableParameters, String> licenceColumn;
+    public TableColumn<UserTableParameters, String> bDateColumn; //del stringo gali reiket keist
+    public TableColumn<UserTableParameters, String> cehicleTypeColumn;
 
 
     private EntityManagerFactory entityManagerFactory;
@@ -101,6 +104,10 @@ public class MainForm implements Initializable {
             user.setPhoneNumber(event.getNewValue());
             customHibernate.update(user);
         });
+        licenceColumn.setCellValueFactory(new PropertyValueFactory<>("licence"));
+        bDateColumn.setCellValueFactory(new PropertyValueFactory<>("bDate"));
+        cehicleTypeColumn.setCellValueFactory(new PropertyValueFactory<>("vehicleType"));
+
 
 
     }
@@ -122,15 +129,13 @@ public class MainForm implements Initializable {
                     userTableParameters.setAddress(((BasicUser) u).getAddress());
                 }
 //                Baibaik debilas tu, Mantas is praeities
-//                else if (u instanceof Restaurant){
-//                    userTableParameters.setAddress(((Restaurant) u).getAddress());
-//                }
-//                else if (u instanceof Client){
-//                    userTableParameters.setAddress(((Client) u).getAddress());
-//                }
-//                else if (u instanceof Driver){
-//                    userTableParameters.setAddress(((Driver) u).getAddress());
-//                }
+                if (u instanceof Driver) {
+                    userTableParameters.setName(u.getName());
+                    userTableParameters.setLicence(((Driver) u).getLicence());
+                    userTableParameters.setbDate(String.valueOf(((Driver) u).getBDate()));
+                    userTableParameters.setVehicleType(String.valueOf(((Driver) u).getVehicleType()));
+
+                }
 
                 userTable.getItems().add(userTableParameters);
 

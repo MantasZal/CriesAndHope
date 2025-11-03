@@ -3,6 +3,8 @@ package org.example.criesandhope.fxController;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
+import java.text.SimpleDateFormat;
+
 public class UserTableParameters {
     private SimpleIntegerProperty id = new SimpleIntegerProperty();
     private SimpleStringProperty userType = new SimpleStringProperty();
@@ -12,6 +14,45 @@ public class UserTableParameters {
     private SimpleStringProperty surname = new SimpleStringProperty();
     private SimpleStringProperty phoneNum = new SimpleStringProperty();
     private SimpleStringProperty address = new SimpleStringProperty();
+    private SimpleStringProperty licence = new SimpleStringProperty();
+    private SimpleStringProperty bDate = new SimpleStringProperty();
+    private SimpleStringProperty vehicleType = new SimpleStringProperty();
+
+    public String getLicence() {
+        return licence.get();
+    }
+
+    public SimpleStringProperty licenceProperty() {
+        return licence;
+    }
+
+    public void setLicence(String licence) {
+        this.licence.set(licence);
+    }
+
+    public String getbDate() {
+        return bDate.get();
+    }
+
+    public SimpleStringProperty bDateProperty() {
+        return bDate;
+    }
+
+    public void setbDate(String bDate) {
+        this.bDate.set(bDate);
+    }
+
+    public String getVehicleType() {
+        return vehicleType.get();
+    }
+
+    public SimpleStringProperty vehicleTypeProperty() {
+        return vehicleType;
+    }
+
+    public void setVehicleType(String vehicleType) {
+        this.vehicleType.set(vehicleType);
+    }
 
     public int getId() {
         return id.get();
@@ -108,4 +149,5 @@ public class UserTableParameters {
     public void setAddress(String address) {
         this.address.set(address);
     }
+
 }

@@ -13,9 +13,8 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+
 @Entity
-
-
 public class Driver extends BasicUser {
     private String licence;
     private LocalDate bDate;
