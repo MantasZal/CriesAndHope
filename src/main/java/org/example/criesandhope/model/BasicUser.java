@@ -36,4 +36,36 @@ public class BasicUser extends User {
         this.feedback = new ArrayList<>();
         this.myOrders = new ArrayList<>();
     }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public List<FoodOrder> getMyOrders() {
+        return myOrders;
+    }
+
+    public void setMyOrders(List<FoodOrder> myOrders) {
+        this.myOrders = myOrders;
+    }
+
+    public List<Review> getFeedback() {
+        return feedback;
+    }
+
+    public void setFeedback(List<Review> feedback) {
+        this.feedback = feedback;
+    }
+
+    public List<Review> getMyReviews() {
+        return myReviews;
+    }
+
+    public void setMyReviews(List<Review> myReviews) {
+        this.myReviews = myReviews;
+    }
 }
