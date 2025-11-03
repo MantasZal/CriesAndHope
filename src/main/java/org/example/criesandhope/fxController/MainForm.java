@@ -45,49 +45,55 @@ public class MainForm implements Initializable {
     public TableColumn<UserTableParameters, String> licenceColumn;
     public TableColumn<UserTableParameters, String> bDateColumn; //del stringo gali reiket keist
     public TableColumn<UserTableParameters, String> cehicleTypeColumn;
+    public TextField deleteUserIDField;
+    public Tab reviewTab;
+    public Tab ChatTab;
+    public ListView<Chat> chatListView;
 
 
     private EntityManagerFactory entityManagerFactory;
     private CustomHibernate customHibernate;
     private User currentUser;
     private ObservableList<UserTableParameters> data = FXCollections.observableArrayList();
+    private ObservableList<Chat> chatMessages = FXCollections.observableArrayList();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        userTable.setEditable(true);
-        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-        userTypeColumn.setCellValueFactory(new PropertyValueFactory<>("userType"));
-        loginColumn.setCellValueFactory(new PropertyValueFactory<>("login"));
+        if(userTab.isSelected()) {
+            userTable.setEditable(true);
+            idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+            userTypeColumn.setCellValueFactory(new PropertyValueFactory<>("userType"));
+            loginColumn.setCellValueFactory(new PropertyValueFactory<>("login"));
 
-        passwordColumn.setCellValueFactory(new PropertyValueFactory<>("password"));
-        passwordColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-        passwordColumn.setOnEditCommit(event -> {
-            event.getTableView().getItems().get(event.getTablePosition().getRow()).setPassword(event.getNewValue());
-            User user = customHibernate.getEntityById(User.class, event.getTableView().getItems().get(event.getTablePosition().getRow()).getId());
-            user.setPassword(event.getNewValue());
-            customHibernate.update(user);
-        });
+            passwordColumn.setCellValueFactory(new PropertyValueFactory<>("password"));
+            passwordColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+            passwordColumn.setOnEditCommit(event -> {
+                event.getTableView().getItems().get(event.getTablePosition().getRow()).setPassword(event.getNewValue());
+                User user = customHibernate.getEntityById(User.class, event.getTableView().getItems().get(event.getTablePosition().getRow()).getId());
+                user.setPassword(event.getNewValue());
+                customHibernate.update(user);
+            });
 
-        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        nameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-        nameColumn.setOnEditCommit(event -> {
-            event.getTableView().getItems().get(event.getTablePosition().getRow()).setName(event.getNewValue());
-            User user = customHibernate.getEntityById(User.class, event.getTableView().getItems().get(event.getTablePosition().getRow()).getId());
-            user.setName(event.getNewValue());
-            customHibernate.update(user);
-        });
+            nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+            nameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+            nameColumn.setOnEditCommit(event -> {
+                event.getTableView().getItems().get(event.getTablePosition().getRow()).setName(event.getNewValue());
+                User user = customHibernate.getEntityById(User.class, event.getTableView().getItems().get(event.getTablePosition().getRow()).getId());
+                user.setName(event.getNewValue());
+                customHibernate.update(user);
+            });
 
-        surnameColumn.setCellValueFactory(new PropertyValueFactory<>("surname"));
-        surnameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-        surnameColumn.setOnEditCommit(event -> {
-            event.getTableView().getItems().get(event.getTablePosition().getRow()).setSurname(event.getNewValue());
-            User user = customHibernate.getEntityById(User.class, event.getTableView().getItems().get(event.getTablePosition().getRow()).getId());
-            user.setSurname(event.getNewValue());
-            customHibernate.update(user);
-        });
+            surnameColumn.setCellValueFactory(new PropertyValueFactory<>("surname"));
+            surnameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+            surnameColumn.setOnEditCommit(event -> {
+                event.getTableView().getItems().get(event.getTablePosition().getRow()).setSurname(event.getNewValue());
+                User user = customHibernate.getEntityById(User.class, event.getTableView().getItems().get(event.getTablePosition().getRow()).getId());
+                user.setSurname(event.getNewValue());
+                customHibernate.update(user);
+            });
 
-        addressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
-//        kaszkas ne to  !!!!!!!!!!
+            addressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
+            //neveikia redaguot adreso cia, basicuser klaseje yra, bet user klasej nera
 //        addressColumn.setCellFactory(TextFieldTableCell.forTableColumn());
 //        addressColumn.setOnEditCommit(event -> {
 //            event.getTableView().getItems().get(event.getTablePosition().getRow()).setAddress(event.getNewValue());
@@ -96,17 +102,20 @@ public class MainForm implements Initializable {
 //            customHibernate.update(basicUser);
 //        });
 
-        phoneNumberColumn.setCellValueFactory(new PropertyValueFactory<>("phoneNum"));
-        phoneNumberColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-        phoneNumberColumn.setOnEditCommit(event -> {
-            event.getTableView().getItems().get(event.getTablePosition().getRow()).setPhoneNum(event.getNewValue());
-            User user = customHibernate.getEntityById(User.class, event.getTableView().getItems().get(event.getTablePosition().getRow()).getId());
-            user.setPhoneNumber(event.getNewValue());
-            customHibernate.update(user);
-        });
-        licenceColumn.setCellValueFactory(new PropertyValueFactory<>("licence"));
-        bDateColumn.setCellValueFactory(new PropertyValueFactory<>("bDate"));
-        cehicleTypeColumn.setCellValueFactory(new PropertyValueFactory<>("vehicleType"));
+            phoneNumberColumn.setCellValueFactory(new PropertyValueFactory<>("phoneNum"));
+            phoneNumberColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+            phoneNumberColumn.setOnEditCommit(event -> {
+                event.getTableView().getItems().get(event.getTablePosition().getRow()).setPhoneNum(event.getNewValue());
+                User user = customHibernate.getEntityById(User.class, event.getTableView().getItems().get(event.getTablePosition().getRow()).getId());
+                user.setPhoneNumber(event.getNewValue());
+                customHibernate.update(user);
+            });
+            licenceColumn.setCellValueFactory(new PropertyValueFactory<>("licence"));
+            bDateColumn.setCellValueFactory(new PropertyValueFactory<>("bDate"));
+            cehicleTypeColumn.setCellValueFactory(new PropertyValueFactory<>("vehicleType"));
+        }
+
+
 
 
 
@@ -136,12 +145,11 @@ public class MainForm implements Initializable {
                     userTableParameters.setVehicleType(String.valueOf(((Driver) u).getVehicleType()));
 
                 }
-
                 userTable.getItems().add(userTableParameters);
-
-
             }
-
+        }
+        if (ChatTab.isSelected()) {
+            chatListView.getItems().addAll(customHibernate.getAllRecords(Chat.class));
 
         }
 
@@ -187,5 +195,12 @@ public class MainForm implements Initializable {
         stage.setScene(scene);
         stage.show();
 
+    }
+
+
+
+    public void deletUser(ActionEvent actionEvent) {
+        customHibernate.delete(User.class, deleteUserIDField.getText());
+        reloadTableData();
     }
 }

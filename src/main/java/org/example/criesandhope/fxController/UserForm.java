@@ -37,11 +37,16 @@ public class UserForm implements Initializable {
     public TextField licenceField;
     public DatePicker licenceDatePIcker;
     public ComboBox<VehicleType> vechicleType;
+    public ToggleGroup usertType;
 
     private GenericHibernate genericHibernate;
     private EntityManagerFactory entityManagerFactory;
 
     public void disableFields(ActionEvent actionEvent) {
+        addressField.setDisable(true);
+        licenceField.setDisable(true);
+        licenceDatePIcker.setDisable(true);
+        vechicleType.setDisable(true);
         if (userRadio.isSelected()) {
             addressField.setDisable(true);
             licenceField.setDisable(true);
@@ -63,6 +68,9 @@ public class UserForm implements Initializable {
         } else if (driverRadio.isSelected()) {
             driverRadio.setSelected(true);
             addressField.setDisable(false);
+            licenceField.setDisable(false);
+            licenceDatePIcker.setDisable(false);
+            vechicleType.setDisable(false);
         } else {
         }
     }

@@ -21,6 +21,7 @@ public class GenericHibernate {
 
     public <T> void create(T entity) {
         try {
+            //kaip padaryt jog pridetu kada sukurta
             entityManager = entityManagerFactory.createEntityManager();
             entityManager.getTransaction().begin();
             entityManager.persist(entity); //INSERT
@@ -105,6 +106,32 @@ public class GenericHibernate {
         }
         return list;
     }
+    public <T> void delete(Class<T> entityClass, Object id) {
+        EntityManager entityManager = null;
+        try {
+            entityManager = entityManagerFactory.createEntityManager();
+            entityManager.getTransaction().begin();
+
+            // Surandame objektą pagal ID
+            T entity = entityManager.find(entityClass, id);
+            if (entity != null) {
+                entityManager.remove(entity); // DELETE
+                entityManager.getTransaction().commit();
+                System.out.println("Įrašas sėkmingai ištrintas!");
+            } else {
+                System.out.println("Įrašas su ID " + id + " nerastas!");
+            }
+
+        } catch (Exception e) {
+            if (entityManager != null && entityManager.getTransaction().isActive()) {
+                entityManager.getTransaction().rollback();
+            }
+            System.err.println("Klaida trinant įrašą: " + e.getMessage());
+        } finally {
+            if (entityManager != null) entityManager.close();
+        }
+    }
+
 
 
 }
