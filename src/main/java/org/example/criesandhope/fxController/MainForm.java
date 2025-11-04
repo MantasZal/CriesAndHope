@@ -250,8 +250,9 @@ public class MainForm implements Initializable {
     }
 
     public void loadCuisineList(ActionEvent actionEvent) {
+        List <Cuisine> cuisines = customHibernate.getCuisinesByRestaurant(restaurantComboBox.getValue());
         cuisineListView.getItems().clear();
-        cuisineListView.getItems().addAll(customHibernate.getCuisinesByRestaurant(restaurantComboBox.getValue()));
+        cuisineListView.getItems().addAll(cuisines);
     }
 
     public void createNewCuisine(ActionEvent actionEvent) {
@@ -261,5 +262,8 @@ public class MainForm implements Initializable {
     }
 
     public void filterCuisine(ActionEvent actionEvent) {
+//        List<Cuisine> filteredCuisines = customHibernate.getCuisineByCredentials(cuisineNameFilterField.getText(), cuisinePriceFilterField.getText(), String.valueOf(restaurantComboBox.getValue()));
+//        cuisineListView.getItems().clear();
+//        cuisineListView.getItems().addAll(filteredCuisines);
     }
 }

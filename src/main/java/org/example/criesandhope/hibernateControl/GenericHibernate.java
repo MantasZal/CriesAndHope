@@ -9,6 +9,7 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import javafx.scene.control.Alert;
 import org.example.criesandhope.model.Chat;
+import org.example.criesandhope.model.Cuisine;
 import org.example.criesandhope.model.Restaurant;
 import org.example.criesandhope.model.User;
 import org.example.criesandhope.utils.StandartDialogs;
@@ -154,4 +155,39 @@ public class GenericHibernate {
         }
         return list;
     }
+
+    public List<Cuisine> getCuisineByCredentials(String name, String price, String restaurant) {
+        List<Cuisine> list = new ArrayList<>();
+        try {
+            entityManager = entityManagerFactory.createEntityManager();
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<Cuisine> query = cb.createQuery(Cuisine.class);
+            Root<Cuisine> root = query.from(Cuisine.class);
+            query.select(root).where(cb.and(cb.like(root.get("name"), "%" + name + "%"), cb.like(root.get("price").as(String.class), "%" + price + "%"),
+                    cb.like(root.get("restaurant").get("name"), "%" + restaurant + "%")));
+            Query q = entityManager.createQuery(query);
+            list = q.getResultList();
+        } catch (Exception e) {
+            standartDialogs.errorDialog("Could not find cuisines by credentials" + e.getMessage());
+        }
+        return list;
+
+    }
+
+    public List<Cuisine> getCuisinesByRestaurant(Restaurant value) {
+        List<Cuisine> list = new ArrayList<>();
+        try {
+            entityManager = entityManagerFactory.createEntityManager();
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<Cuisine> query = cb.createQuery(Cuisine.class);
+            Root<Cuisine> root = query.from(Cuisine.class);
+            query.select(root).where(cb.equal(root.get("restaurant"), value));
+            Query q = entityManager.createQuery(query);
+            list = q.getResultList();
+        } catch (Exception e) {
+            standartDialogs.errorDialog("Could not find chats by credentials" + e.getMessage());
+        }
+        return list;
+    }
 }
+

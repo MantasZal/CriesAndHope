@@ -41,26 +41,5 @@ public class CustomHibernate extends GenericHibernate {
     }
 
 
-    public Cuisine getCuisinesByRestaurant(Restaurant value) {
-        Cuisine cuisine = null;
-        try {
-            entityManager = entityManagerFactory.createEntityManager();
-            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-            CriteriaQuery<Cuisine> query = cb.createQuery(Cuisine.class);
-            Root<Cuisine> root = query.from(Cuisine.class);
 
-            query.select(root).where(cb.equal(root.get("restaurant"), value));
-            Query q = entityManager.createQuery(query);
-            cuisine = (Cuisine) q.getSingleResult();
-        } catch (Exception e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error Dialog");
-            alert.setHeaderText("No menu found");
-            alert.setContentText("Ooops, there was an error!");
-
-            alert.showAndWait();
-
-        }
-        return cuisine;
-    }
 }

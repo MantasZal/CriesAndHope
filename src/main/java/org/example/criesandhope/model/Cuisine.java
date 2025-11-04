@@ -29,9 +29,9 @@ public class Cuisine {
 
     @Override
     public String toString() {
-        return "name='" + name + '\'' +
-                ", ingredients=" + ingredients +
-                ", price=" + price +
+        return  ": '" + name + '\'' +
+                ", " + ingredients +
+                ", " + price +
                 ", spicy=" + spicy +
                 ", vegan=" + vegan ;
     }
