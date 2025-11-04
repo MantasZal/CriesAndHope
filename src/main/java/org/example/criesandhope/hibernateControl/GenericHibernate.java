@@ -2,11 +2,15 @@ package org.example.criesandhope.hibernateControl;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Query;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
+import javafx.scene.control.Alert;
+import org.example.criesandhope.model.Chat;
 import org.example.criesandhope.model.User;
+import org.example.criesandhope.utils.StandartDialogs;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +18,7 @@ import java.util.List;
 public class GenericHibernate {
     protected EntityManagerFactory entityManagerFactory;
     protected EntityManager entityManager;
+    protected StandartDialogs standartDialogs= new StandartDialogs();
 
     public GenericHibernate(EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
@@ -27,7 +32,7 @@ public class GenericHibernate {
             entityManager.persist(entity); //INSERT
             entityManager.getTransaction().commit();
         } catch (Exception e) {
-            //Noriu alerto
+            standartDialogs.errorDialog("Coulnd not create record: " + e.getMessage());
         } finally {
             if (entityManager != null) entityManager.close();
         }
@@ -40,7 +45,7 @@ public class GenericHibernate {
             entityManager.merge(entity); //UPDATE
             entityManager.getTransaction().commit();
         } catch (Exception e) {
-            //Noriu alerto
+            standartDialogs.errorDialog("Coulnd not update record: " + e.getMessage());
         } finally {
             if (entityManager != null) entityManager.close();
         }
@@ -54,7 +59,7 @@ public class GenericHibernate {
             entity = entityManager.find(entityClass, id);
             entityManager.getTransaction().commit();
         } catch (Exception e) {
-            //Noriu alerto
+            standartDialogs.errorDialog("Coulnd not find record by id: " + id);
         } finally {
             if (entityManager != null) entityManager.close();
         }
@@ -70,7 +75,8 @@ public class GenericHibernate {
             entityManager.remove(entity); //DELETE
             entityManager.getTransaction().commit();
         } catch (Exception e) {
-            //Noriu alerto
+            standartDialogs.errorDialog("Coulnd not find record by id: " + id);
+
         } finally {
             if (entityManager != null) entityManager.close();
         }
@@ -86,7 +92,7 @@ public class GenericHibernate {
             Query q = entityManager.createQuery(query);
             list = q.getResultList();
         } catch (Exception e) {
-            //alerto reiks
+            standartDialogs.errorDialog("Coulnd not get all records: " + e.getMessage());
         }
         return list;
     }
@@ -102,7 +108,7 @@ public class GenericHibernate {
             Query q = entityManager.createQuery(query);
             list = q.getResultList();
         } catch (Exception e) {
-            //alerto reiks
+            standartDialogs.errorDialog("Could not find logs by credentials" + e.getMessage());
         }
         return list;
     }
@@ -126,12 +132,26 @@ public class GenericHibernate {
             if (entityManager != null && entityManager.getTransaction().isActive()) {
                 entityManager.getTransaction().rollback();
             }
-            System.err.println("Klaida trinant įrašą: " + e.getMessage());
+            standartDialogs.errorDialog("Could not delete record by id: " + id + " Error: " + e.getMessage());
         } finally {
             if (entityManager != null) entityManager.close();
         }
     }
 
 
-
+    public List<Chat> getChatByCredentials(String text) {
+        List<Chat> list = new ArrayList<>();
+        try {
+            entityManager = entityManagerFactory.createEntityManager();
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<Chat> query = cb.createQuery(Chat.class);
+            Root<Chat> root = query.from(Chat.class);
+            query.select(root).where(cb.and(cb.like(root.get("name"), "%" + text + "%")));
+            Query q = entityManager.createQuery(query);
+            list = q.getResultList();
+        } catch (Exception e) {
+            standartDialogs.errorDialog("Could not find chats by credentials" + e.getMessage());
+        }
+        return list;
+    }
 }

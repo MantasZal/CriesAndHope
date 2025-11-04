@@ -49,17 +49,19 @@ public class MainForm implements Initializable {
     public Tab reviewTab;
     public Tab ChatTab;
     public ListView<Chat> chatListView;
+    public TextField chatTextField;
+    public TextField chatUserNameField;
+    public TextField chatIdField;
 
 
     private EntityManagerFactory entityManagerFactory;
-    private CustomHibernate customHibernate;
+    private CustomHibernate customHibernate= new CustomHibernate(entityManagerFactory);
     private User currentUser;
     private ObservableList<UserTableParameters> data = FXCollections.observableArrayList();
     private ObservableList<Chat> chatMessages = FXCollections.observableArrayList();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        if(userTab.isSelected()) {
             userTable.setEditable(true);
             idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
             userTypeColumn.setCellValueFactory(new PropertyValueFactory<>("userType"));
@@ -113,7 +115,8 @@ public class MainForm implements Initializable {
             licenceColumn.setCellValueFactory(new PropertyValueFactory<>("licence"));
             bDateColumn.setCellValueFactory(new PropertyValueFactory<>("bDate"));
             cehicleTypeColumn.setCellValueFactory(new PropertyValueFactory<>("vehicleType"));
-        }
+
+        chatListView.getItems().addAll(customHibernate.getAllRecords(Chat.class));
 
 
 
@@ -149,6 +152,7 @@ public class MainForm implements Initializable {
             }
         }
         if (ChatTab.isSelected()) {
+            chatListView.getItems().clear();
             chatListView.getItems().addAll(customHibernate.getAllRecords(Chat.class));
 
         }
@@ -202,5 +206,24 @@ public class MainForm implements Initializable {
     public void deletUser(ActionEvent actionEvent) {
         customHibernate.delete(User.class, deleteUserIDField.getText());
         reloadTableData();
+    }
+
+    public void createChat(ActionEvent actionEvent) {
+
+        Chat chat = new Chat(currentUser.getName(), chatTextField.getText());
+        customHibernate.create(chat);
+        chatListView.getItems().add(chat);
+    }
+
+    public void filterChat(ActionEvent actionEvent) {
+        List<Chat> filteredChats = customHibernate.getChatByCredentials(chatUserNameField.getText());
+        chatListView.getItems().clear();
+        chatListView.getItems().addAll(filteredChats);
+    }
+
+    public void deleteChat(ActionEvent actionEvent) {
+        customHibernate.delete(Chat.class, Integer.parseInt(chatIdField.getText()));
+        reloadTableData();
+
     }
 }

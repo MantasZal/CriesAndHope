@@ -54,7 +54,13 @@
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <ListView fx:id="chatListView" layoutX="293.0" layoutY="99.0" prefHeight="200.0" prefWidth="200.0" />
+                        <ListView fx:id="chatListView" layoutX="2.0" layoutY="49.0" prefHeight="200.0" prefWidth="901.0" />
+                        <Button layoutX="71.0" layoutY="355.0" mnemonicParsing="false" onAction="#createChat" text="Craete Chat" />
+                        <TextField fx:id="chatTextField" layoutX="36.0" layoutY="283.0" promptText="Text" />
+                        <Button layoutX="427.0" layoutY="355.0" mnemonicParsing="false" onAction="#filterChat" text="Filter" />
+                        <TextField fx:id="chatUserNameField" layoutX="378.0" layoutY="283.0" promptText="Name" />
+                        <TextField fx:id="chatIdField" layoutX="729.0" layoutY="283.0" promptText="Chat id" />
+                        <Button layoutX="769.0" layoutY="355.0" mnemonicParsing="false" onAction="#deleteChat" text="Delet chat" />
                      </children>
                   </AnchorPane>
               </content>

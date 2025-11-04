@@ -24,4 +24,18 @@ public class Chat {
     @OneToOne(mappedBy = "chat", cascade = CascadeType.ALL)
     private FoodOrder foodOrder;
 
+    @Override
+    public String toString() {
+        return "Chat{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", chatText='" + chatText + '\'' +
+                ", dateCreated=" + dateCreated +
+                '}';
+    }
+
+    public Chat(String name, String chatText) {
+        this.name = name;
+        this.chatText = chatText;
+    }
 }
