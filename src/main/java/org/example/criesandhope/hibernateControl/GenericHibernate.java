@@ -8,10 +8,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import javafx.scene.control.Alert;
-import org.example.criesandhope.model.Chat;
-import org.example.criesandhope.model.Cuisine;
-import org.example.criesandhope.model.Restaurant;
-import org.example.criesandhope.model.User;
+import org.example.criesandhope.model.*;
 import org.example.criesandhope.utils.StandartDialogs;
 
 import java.util.ArrayList;
@@ -188,6 +185,23 @@ public class GenericHibernate {
             standartDialogs.errorDialog("Could not find chats by credentials" + e.getMessage());
         }
         return list;
+    }
+
+    public List<FoodOrder> getFoodOrderByCredentials(String name, String price) {
+        List<FoodOrder> list = new ArrayList<>();
+        try {
+            entityManager = entityManagerFactory.createEntityManager();
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<FoodOrder> query = cb.createQuery(FoodOrder.class);
+            Root<FoodOrder> root = query.from(FoodOrder.class);
+            query.select(root).where(cb.and(cb.like(root.get("name"), "%" + name + "%"), cb.like(root.get("price").as(String.class), "%" + price + "%")));
+            Query q = entityManager.createQuery(query);
+            list = q.getResultList();
+        } catch (Exception e) {
+            standartDialogs.errorDialog("Could not find food orders by credentials" + e.getMessage());
+        }
+        return list;
+
     }
 }
 

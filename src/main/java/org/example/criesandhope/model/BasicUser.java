@@ -37,6 +37,11 @@ public class BasicUser extends User {
         this.myOrders = new ArrayList<>();
     }
 
+    @Override
+    public String toString() {
+        return name ;
+    }
+
     public String getAddress() {
         return address;
     }

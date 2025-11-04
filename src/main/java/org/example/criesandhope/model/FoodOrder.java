@@ -28,4 +28,19 @@ public class FoodOrder {
     @ManyToOne
     private Restaurant restaurant;
 
+    public FoodOrder(String name, Double price, BasicUser buyer, Restaurant restaurant) {
+        this.name = name;
+        this.price = price;
+        this.buyer = buyer;
+        this.restaurant = restaurant;
+    }
+
+    @Override
+    public String toString() {
+        return  "name='" + name + '\'' +
+                ", price=" + price +
+                ", buyer=" + buyer +
+                ", restaurant=" + restaurant +
+                ",  buyer=" + buyer;
+    }
 }

@@ -5,7 +5,12 @@ import jakarta.persistence.Query;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import org.example.criesandhope.model.Cuisine;
 import org.example.criesandhope.model.Restaurant;
 import org.example.criesandhope.model.User;
@@ -39,6 +44,7 @@ public class CustomHibernate extends GenericHibernate {
         }
         return user;
     }
+
 
 
 

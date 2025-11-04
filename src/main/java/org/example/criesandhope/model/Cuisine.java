@@ -29,7 +29,7 @@ public class Cuisine {
 
     @Override
     public String toString() {
-        return  ": '" + name + '\'' +
+        return  id +": '" + name + '\'' +
                 ", " + ingredients +
                 ", " + price +
                 ", spicy=" + spicy +

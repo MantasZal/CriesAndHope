@@ -1,5 +1,6 @@
 package org.example.criesandhope.fxController;
 
+import com.mysql.cj.xdevapi.Client;
 import jakarta.persistence.EntityManagerFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import org.example.criesandhope.HelloApplication;
 import org.example.criesandhope.hibernateControl.CustomHibernate;
@@ -21,6 +23,7 @@ import org.example.criesandhope.model.*;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -37,7 +40,6 @@ public class MainForm implements Initializable {
     public TableColumn<UserTableParameters, String> addressColumn;
     public TableColumn<UserTableParameters, String> userTypeColumn;
     public TableColumn<UserTableParameters, String> phoneNumberColumn;
-    public TableColumn<UserTableParameters, String> actionColumn; //gali reiket keist kazkaip padryt delete mygtuka
     public TextField filterLogin;
     public TextField filterName;
     public TextField filterSurname;
@@ -63,7 +65,18 @@ public class MainForm implements Initializable {
     public TextField cuisinePriceField;
     public TextField cuisineNameFilterField;
     public TextField cuisinePriceFilterField;
+    public TextField cuisineIdField;
+    public ListView<Cuisine> orderCuisineListView;
+    public Tab foodOderTab;
+    public ListView<FoodOrder> foodOrderListView;
+    public ComboBox<BasicUser> clientComboBox;
+    public TextField orderNameField;
+    public TextField orderPriceField;
+    public ComboBox<Restaurant> orderRestaurantComboBox;
+    public TextField orderNameFilterField;
+    public TextField orderPriceFilterField;
     private ObservableList<Restaurant> restaurants = FXCollections.observableArrayList();
+    private ObservableList<BasicUser> clients = FXCollections.observableArrayList();
 
 
     private EntityManagerFactory entityManagerFactory;
@@ -130,7 +143,7 @@ public class MainForm implements Initializable {
             bDateColumn.setCellValueFactory(new PropertyValueFactory<>("bDate"));
             cehicleTypeColumn.setCellValueFactory(new PropertyValueFactory<>("vehicleType"));
 
-        chatListView.getItems().addAll(customHibernate.getAllRecords(Chat.class));
+
 
 
 
@@ -178,6 +191,19 @@ public class MainForm implements Initializable {
             restaurants.setAll(customHibernate.getAllRecords(Restaurant.class));
             restaurantComboBox.setItems(restaurants);
         }
+        if(foodOderTab.isSelected()){
+            //clearAllFields(); //Patikrink kas cia vyksta
+            foodOrderListView.getItems().clear();
+            foodOrderListView.getItems().addAll(customHibernate.getAllRecords(FoodOrder.class));
+
+
+            clients.setAll(customHibernate.getAllRecords(BasicUser.class));
+            clientComboBox.setItems(clients);
+
+            restaurants.setAll(customHibernate.getAllRecords(Restaurant.class));
+            orderRestaurantComboBox.setItems(restaurants);
+
+        }
 
     }
     public void setData(EntityManagerFactory entityManagerFactory, User user) {
@@ -188,6 +214,7 @@ public class MainForm implements Initializable {
     }
 
 
+    //<editor-fold desc="User Functionality"> //ctr alt t
     public void filterUsers(ActionEvent actionEvent) {
         List<User> filteredUsers = customHibernate.getByCredentials(filterLogin.getText(), filterName.getText(), filterSurname.getText(),  filterPhoneNum.getText());
         userTable.getItems().clear();
@@ -223,13 +250,13 @@ public class MainForm implements Initializable {
 
     }
 
-
-
     public void deletUser(ActionEvent actionEvent) {
         customHibernate.delete(User.class, deleteUserIDField.getText());
         reloadTableData();
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Chat Tab Functionality"> //ctr alt t
     public void createChat(ActionEvent actionEvent) {
 
         Chat chat = new Chat(currentUser.getName(), chatTextField.getText());
@@ -248,7 +275,9 @@ public class MainForm implements Initializable {
         reloadTableData();
 
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Cuisine Tab Functionality"> //ctr alt t
     public void loadCuisineList(ActionEvent actionEvent) {
         List <Cuisine> cuisines = customHibernate.getCuisinesByRestaurant(restaurantComboBox.getValue());
         cuisineListView.getItems().clear();
@@ -262,8 +291,82 @@ public class MainForm implements Initializable {
     }
 
     public void filterCuisine(ActionEvent actionEvent) {
-//        List<Cuisine> filteredCuisines = customHibernate.getCuisineByCredentials(cuisineNameFilterField.getText(), cuisinePriceFilterField.getText(), String.valueOf(restaurantComboBox.getValue()));
-//        cuisineListView.getItems().clear();
-//        cuisineListView.getItems().addAll(filteredCuisines);
+        List<Cuisine> filteredCuisines = customHibernate.getCuisineByCredentials(cuisineNameFilterField.getText(), cuisinePriceFilterField.getText(), String.valueOf(restaurantComboBox.getValue()));
+        cuisineListView.getItems().clear();
+        cuisineListView.getItems().addAll(filteredCuisines);
+    }
+
+    public void deleteCuisine(ActionEvent actionEvent) {
+        customHibernate.delete(Cuisine.class, Integer.parseInt(cuisineIdField.getText()));
+        reloadTableData();
+    }
+    //</editor-fold>
+
+
+    //<editor-fold desc="Order Tab Functionality"> //ctr alt t
+    public void deleteOrder(ActionEvent actionEvent) {
+        FoodOrder selectedOrder = foodOrderListView.getSelectionModel().getSelectedItem();
+        customHibernate.delete(FoodOrder.class, selectedOrder.getId());
+        reloadTableData();
+    }
+
+    public void createOrder(ActionEvent actionEvent) {
+        FoodOrder foodOrder = new FoodOrder(orderNameField.getText(), Double.parseDouble(orderPriceField.getText()),  clientComboBox.getValue() , orderRestaurantComboBox.getValue());
+        customHibernate.create(foodOrder);
+        foodOrderListView.getItems().clear();
+        foodOrderListView.getItems().addAll(foodOrder);
+        reloadTableData();
+    }
+
+    public void updateOrder(ActionEvent actionEvent) {
+        FoodOrder foodOrder = foodOrderListView.getSelectionModel().getSelectedItem();
+        foodOrder.setRestaurant(restaurantComboBox.getSelectionModel().getSelectedItem());
+        foodOrder.setName(orderNameField.getText());
+        foodOrder.setPrice(Double.valueOf(orderPriceField.getText()));
+        foodOrder.setBuyer(clientComboBox.getSelectionModel().getSelectedItem());
+        customHibernate.update(foodOrder);
+        reloadTableData();
+
+    }
+    public void loadOrderInfo(MouseEvent mouseEvent) {
+        //pasiziiurek 9 pratybas kaip perdaryt
+        FoodOrder selectedOrder = foodOrderListView.getSelectionModel().getSelectedItem();
+        if(selectedOrder != null){
+            orderNameField.setText(selectedOrder.getName());
+            orderPriceField.setText(String.valueOf(selectedOrder.getPrice()));
+            clientComboBox.setValue(selectedOrder.getBuyer());
+            orderRestaurantComboBox.setValue(selectedOrder.getRestaurant());
+
+            orderCuisineListView.getItems().clear();
+            orderCuisineListView.getItems().addAll(selectedOrder.getCuisineList());
+        }
+    }
+    //</editor-fold>
+    private  void clearAllFields(){
+        filterLogin.clear();
+        filterName.clear();
+        filterSurname.clear();
+        filterAddress.clear();
+        filterPhoneNum.clear();
+        deleteUserIDField.clear();
+        chatTextField.clear();
+        chatUserNameField.clear();
+        chatIdField.clear();
+        cuisineNameField.clear();
+        cuisineIngridentsArea.clear();
+        cuisinePriceField.clear();
+        cuisineNameFilterField.clear();
+        cuisinePriceFilterField.clear();
+        cuisineIdField.clear();
+        orderNameField.clear();
+        orderPriceField.clear();
+    }
+
+
+    public void filterOrder(ActionEvent actionEvent) {
+        List<FoodOrder> filteredOrders = customHibernate.getFoodOrderByCredentials(orderNameFilterField.getText(), orderPriceFilterField.getText());
+        foodOrderListView.getItems().clear();
+        foodOrderListView.getItems().addAll(filteredOrders);
+
     }
 }
