@@ -9,6 +9,7 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import javafx.scene.control.Alert;
 import org.example.criesandhope.model.Chat;
+import org.example.criesandhope.model.Restaurant;
 import org.example.criesandhope.model.User;
 import org.example.criesandhope.utils.StandartDialogs;
 
@@ -132,7 +133,6 @@ public class GenericHibernate {
             if (entityManager != null && entityManager.getTransaction().isActive()) {
                 entityManager.getTransaction().rollback();
             }
-            standartDialogs.errorDialog("Could not delete record by id: " + id + " Error: " + e.getMessage());
         } finally {
             if (entityManager != null) entityManager.close();
         }

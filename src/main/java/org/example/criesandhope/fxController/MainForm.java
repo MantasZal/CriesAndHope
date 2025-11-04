@@ -22,6 +22,7 @@ import org.example.criesandhope.model.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class MainForm implements Initializable {
@@ -52,6 +53,17 @@ public class MainForm implements Initializable {
     public TextField chatTextField;
     public TextField chatUserNameField;
     public TextField chatIdField;
+    public Tab foodManagment;
+    public ListView<Cuisine> cuisineListView;
+    public ComboBox<Restaurant> restaurantComboBox;
+    public TextField cuisineNameField;
+    public TextArea cuisineIngridentsArea;
+    public CheckBox veganCheckBoc;
+    public CheckBox SpicyCheckBox;
+    public TextField cuisinePriceField;
+    public TextField cuisineNameFilterField;
+    public TextField cuisinePriceFilterField;
+    private ObservableList<Restaurant> restaurants = FXCollections.observableArrayList();
 
 
     private EntityManagerFactory entityManagerFactory;
@@ -95,14 +107,16 @@ public class MainForm implements Initializable {
             });
 
             addressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
-            //neveikia redaguot adreso cia, basicuser klaseje yra, bet user klasej nera
-//        addressColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-//        addressColumn.setOnEditCommit(event -> {
-//            event.getTableView().getItems().get(event.getTablePosition().getRow()).setAddress(event.getNewValue());
-//            BasicUser basicUser = customHibernate.getEntityById(BasicUser.class, event.getTableView().getItems().get(event.getTablePosition().getRow()).getId());
-//            basicUser.setAddress(event.getNewValue());
-//            customHibernate.update(basicUser);
-//        });
+        addressColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        addressColumn.setOnEditCommit(event -> {
+            if(!Objects.equals(event.getTableView().getItems().get(event.getTablePosition().getRow()).getUserType(), "User")) {
+                //patikrint ar basic useris
+                event.getTableView().getItems().get(event.getTablePosition().getRow()).setAddress(event.getNewValue());
+                BasicUser basicUser = customHibernate.getEntityById(BasicUser.class, event.getTableView().getItems().get(event.getTablePosition().getRow()).getId());
+                basicUser.setAddress(event.getNewValue());
+                customHibernate.update(basicUser);
+            }
+        });
 
             phoneNumberColumn.setCellValueFactory(new PropertyValueFactory<>("phoneNum"));
             phoneNumberColumn.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -117,6 +131,8 @@ public class MainForm implements Initializable {
             cehicleTypeColumn.setCellValueFactory(new PropertyValueFactory<>("vehicleType"));
 
         chatListView.getItems().addAll(customHibernate.getAllRecords(Chat.class));
+
+
 
 
 
@@ -154,7 +170,13 @@ public class MainForm implements Initializable {
         if (ChatTab.isSelected()) {
             chatListView.getItems().clear();
             chatListView.getItems().addAll(customHibernate.getAllRecords(Chat.class));
+            restaurants.setAll(customHibernate.getAllRecords(Restaurant.class));
+            restaurantComboBox.setItems(restaurants);
 
+        }
+        if(foodManagment.isSelected()){
+            restaurants.setAll(customHibernate.getAllRecords(Restaurant.class));
+            restaurantComboBox.setItems(restaurants);
         }
 
     }
@@ -225,5 +247,19 @@ public class MainForm implements Initializable {
         customHibernate.delete(Chat.class, Integer.parseInt(chatIdField.getText()));
         reloadTableData();
 
+    }
+
+    public void loadCuisineList(ActionEvent actionEvent) {
+        cuisineListView.getItems().clear();
+        cuisineListView.getItems().addAll(customHibernate.getCuisinesByRestaurant(restaurantComboBox.getValue()));
+    }
+
+    public void createNewCuisine(ActionEvent actionEvent) {
+        Cuisine cuisine = new Cuisine(cuisineNameField.getText(), cuisineIngridentsArea.getText(),Double.parseDouble(cuisinePriceField.getText()), veganCheckBoc.isSelected(), SpicyCheckBox.isSelected(), restaurantComboBox.getValue());
+        customHibernate.create(cuisine);
+        cuisineListView.getItems().add(cuisine);
+    }
+
+    public void filterCuisine(ActionEvent actionEvent) {
     }
 }
