@@ -86,7 +86,7 @@ public class UserForm implements Initializable {
 
     public void createUser(ActionEvent actionEvent) {
         if(userRadio.isSelected()){
-            User user = new User(loginNameField.getText(), passwordField.getText(), nameField.getText(), surnameField.getText(), phoneNumberField.getText());
+            User user = new User(loginNameField.getText(), passwordField.getText(), nameField.getText(), surnameField.getText(), phoneNumberField.getText(), LocalDateTime.now(), null);
             genericHibernate.create(user);
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Information Dialog");
@@ -94,21 +94,21 @@ public class UserForm implements Initializable {
             alert.setContentText("I have a great message for you!");
         }
         else if (driverRadio.isSelected()){
-            Driver driver= new Driver(loginNameField.getText(), passwordField.getText(), nameField.getText(), surnameField.getText(), phoneNumberField.getText(), addressField.getText(), licenceField.getText(), licenceDatePIcker.getValue(), vechicleType.getValue());
+            Driver driver= new Driver(loginNameField.getText(), passwordField.getText(), nameField.getText(), surnameField.getText(), phoneNumberField.getText(), LocalDateTime.now(), null,addressField.getText(), licenceField.getText(), licenceDatePIcker.getValue(), vechicleType.getValue());
             genericHibernate.create(driver);
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Information Dialog");
             alert.setHeaderText("Success");
             alert.setContentText("I have a great message for you!");
         } else if (restaurantRadio.isSelected()) {
-            Restaurant restaurant = new Restaurant(loginNameField.getText(), passwordField.getText(), nameField.getText(), surnameField.getText(), phoneNumberField.getText(), addressField.getText());
+            Restaurant restaurant = new Restaurant(loginNameField.getText(), passwordField.getText(), nameField.getText(), surnameField.getText(), phoneNumberField.getText(),LocalDateTime.now(), null, addressField.getText());
             genericHibernate.create(restaurant);
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Information Dialog");
             alert.setHeaderText("Success");
             alert.setContentText("I have a great message for you!");
         } else if (clientRadio.isSelected()) {
-            BasicUser basicUser = new BasicUser(loginNameField.getText(), passwordField.getText(), nameField.getText(), surnameField.getText(), phoneNumberField.getText(), addressField.getText());
+            BasicUser basicUser = new BasicUser(loginNameField.getText(), passwordField.getText(), nameField.getText(), surnameField.getText(), phoneNumberField.getText(),LocalDateTime.now(), null, addressField.getText());
             genericHibernate.create(basicUser);
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Information Dialog");

@@ -27,6 +27,8 @@ public class FoodOrder {
     private Chat chat;
     @ManyToOne
     private Restaurant restaurant;
+    @Enumerated(EnumType.ORDINAL)
+    private OrderStatus orderStatus;
 
     public FoodOrder(String name, Double price, BasicUser buyer, Restaurant restaurant) {
         this.name = name;
@@ -41,6 +43,7 @@ public class FoodOrder {
                 ", price=" + price +
                 ", buyer=" + buyer +
                 ", restaurant=" + restaurant +
-                ",  buyer=" + buyer;
+                ",  buyer=" + buyer+
+                ", orderStatus=" + orderStatus;
     }
 }

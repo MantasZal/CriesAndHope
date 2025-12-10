@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,12 +30,17 @@ public class BasicUser extends User {
     @OneToMany(mappedBy = "feedbackUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     protected List<Review> feedback;
 
-    public BasicUser(String login, String password, String name, String surname, String phoneNumber, String address) {
-        super(login, password, name, surname, phoneNumber);
+//    public BasicUser(String login, String password, String name, String surname, String phoneNumber, String address) {
+//        super(login, password, name, surname, phoneNumber);
+//        this.address = address;
+//        this.myReviews = new ArrayList<>();
+//        this.feedback = new ArrayList<>();
+//        this.myOrders = new ArrayList<>();
+//    }
+
+    public BasicUser(String login, String password, String name, String surname, String phoneNumber, LocalDateTime dateCreated, LocalDateTime dateUpdated, String address) {
+        super(login, password, name, surname, phoneNumber, dateCreated, dateUpdated);
         this.address = address;
-        this.myReviews = new ArrayList<>();
-        this.feedback = new ArrayList<>();
-        this.myOrders = new ArrayList<>();
     }
 
     @Override

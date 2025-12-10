@@ -30,14 +30,23 @@ public class User implements Serializable {
     protected LocalDateTime dateUpdated;
     protected boolean isAdmin;
 
-    public User(String login, String password, String name, String surname, String phoneNumber) {
+//    public User(String login, String password, String name, String surname, String phoneNumber) {
+//        this.login = login;
+//        this.password = password;
+//        this.name = name;
+//        this.surname = surname;
+//        this.phoneNumber = phoneNumber;
+//    }
+
+    public User(String login, String password, String name, String surname, String phoneNumber, LocalDateTime dateCreated, LocalDateTime dateUpdated) {
         this.login = login;
         this.password = password;
         this.name = name;
         this.surname = surname;
         this.phoneNumber = phoneNumber;
+        this.dateCreated = dateCreated;
+        this.dateUpdated = dateUpdated;
     }
-
 
     @Override
     public String toString() {

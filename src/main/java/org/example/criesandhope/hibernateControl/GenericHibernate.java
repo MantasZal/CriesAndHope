@@ -85,7 +85,6 @@ public class GenericHibernate {
         List<T> list = new ArrayList<>();
         try {
             entityManager = entityManagerFactory.createEntityManager();
-            entityManager.getTransaction().begin();
             CriteriaQuery query = entityManager.getCriteriaBuilder().createQuery();
             query.select(query.from(entityClass));
             Query q = entityManager.createQuery(query);

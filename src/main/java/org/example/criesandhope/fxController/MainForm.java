@@ -15,6 +15,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.example.criesandhope.HelloApplication;
 import org.example.criesandhope.hibernateControl.CustomHibernate;
@@ -23,10 +24,8 @@ import org.example.criesandhope.model.*;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.ResourceBundle;
+import java.time.LocalDateTime;
+import java.util.*;
 
 public class MainForm implements Initializable {
     public Tab userTab;
@@ -40,14 +39,15 @@ public class MainForm implements Initializable {
     public TableColumn<UserTableParameters, String> addressColumn;
     public TableColumn<UserTableParameters, String> userTypeColumn;
     public TableColumn<UserTableParameters, String> phoneNumberColumn;
+    public TableColumn<UserTableParameters, String> licenceColumn;
+    public TableColumn<UserTableParameters, String> bDateColumn; //del stringo gali reiket keist
+    public TableColumn<UserTableParameters, String> cehicleTypeColumn;
     public TextField filterLogin;
     public TextField filterName;
     public TextField filterSurname;
     public TextField filterAddress;
     public TextField filterPhoneNum;
-    public TableColumn<UserTableParameters, String> licenceColumn;
-    public TableColumn<UserTableParameters, String> bDateColumn; //del stringo gali reiket keist
-    public TableColumn<UserTableParameters, String> cehicleTypeColumn;
+
     public TextField deleteUserIDField;
     public Tab reviewTab;
     public Tab ChatTab;
@@ -75,6 +75,28 @@ public class MainForm implements Initializable {
     public ComboBox<Restaurant> orderRestaurantComboBox;
     public TextField orderNameFilterField;
     public TextField orderPriceFilterField;
+    public Tab orderTab;
+    public ComboBox<Restaurant> orderRestaurantsBox;
+    public ListView<Cuisine> orderMeniuList;
+    public ListView<Cuisine> orderList;
+    public Button orderMakeFoodOrder;
+    public Text orderCost;
+    public ListView<FoodOrder> ordersUsersFoodOrders;
+    public Text foodManagmentRestName;
+    public Button foodOrderCreateButton;
+    public Button foodOrderUpdateButton;
+    public Button foodOrderDeleteButton;
+    public ComboBox<OrderStatus> foodOrderOrderStatus;
+    public Tab accountTab;
+    public TextField accountNameField;
+    public TextField accountSurnameField;
+    public TextField accountLoginField;
+    public TextField accountPasswordField;
+    public TextField accountAdressField;
+    public TextField accountNumbField;
+    public TextField accountLicenseField;
+    public DatePicker accountBDateField;
+    public ComboBox<VehicleType> accountVechileTypeComboBox;
     private ObservableList<Restaurant> restaurants = FXCollections.observableArrayList();
     private ObservableList<BasicUser> clients = FXCollections.observableArrayList();
 
@@ -98,6 +120,7 @@ public class MainForm implements Initializable {
                 event.getTableView().getItems().get(event.getTablePosition().getRow()).setPassword(event.getNewValue());
                 User user = customHibernate.getEntityById(User.class, event.getTableView().getItems().get(event.getTablePosition().getRow()).getId());
                 user.setPassword(event.getNewValue());
+                user.setDateUpdated(LocalDateTime.now());
                 customHibernate.update(user);
             });
 
@@ -107,6 +130,7 @@ public class MainForm implements Initializable {
                 event.getTableView().getItems().get(event.getTablePosition().getRow()).setName(event.getNewValue());
                 User user = customHibernate.getEntityById(User.class, event.getTableView().getItems().get(event.getTablePosition().getRow()).getId());
                 user.setName(event.getNewValue());
+                user.setDateUpdated(LocalDateTime.now());
                 customHibernate.update(user);
             });
 
@@ -116,6 +140,7 @@ public class MainForm implements Initializable {
                 event.getTableView().getItems().get(event.getTablePosition().getRow()).setSurname(event.getNewValue());
                 User user = customHibernate.getEntityById(User.class, event.getTableView().getItems().get(event.getTablePosition().getRow()).getId());
                 user.setSurname(event.getNewValue());
+                user.setDateUpdated(LocalDateTime.now());
                 customHibernate.update(user);
             });
 
@@ -123,10 +148,10 @@ public class MainForm implements Initializable {
         addressColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         addressColumn.setOnEditCommit(event -> {
             if(!Objects.equals(event.getTableView().getItems().get(event.getTablePosition().getRow()).getUserType(), "User")) {
-                //patikrint ar basic useris
                 event.getTableView().getItems().get(event.getTablePosition().getRow()).setAddress(event.getNewValue());
                 BasicUser basicUser = customHibernate.getEntityById(BasicUser.class, event.getTableView().getItems().get(event.getTablePosition().getRow()).getId());
                 basicUser.setAddress(event.getNewValue());
+                basicUser.setDateUpdated(LocalDateTime.now());
                 customHibernate.update(basicUser);
             }
         });
@@ -137,18 +162,12 @@ public class MainForm implements Initializable {
                 event.getTableView().getItems().get(event.getTablePosition().getRow()).setPhoneNum(event.getNewValue());
                 User user = customHibernate.getEntityById(User.class, event.getTableView().getItems().get(event.getTablePosition().getRow()).getId());
                 user.setPhoneNumber(event.getNewValue());
+                user.setDateUpdated(LocalDateTime.now());
                 customHibernate.update(user);
             });
             licenceColumn.setCellValueFactory(new PropertyValueFactory<>("licence"));
             bDateColumn.setCellValueFactory(new PropertyValueFactory<>("bDate"));
             cehicleTypeColumn.setCellValueFactory(new PropertyValueFactory<>("vehicleType"));
-
-
-
-
-
-
-
 
 
     }
@@ -188,21 +207,99 @@ public class MainForm implements Initializable {
 
         }
         if(foodManagment.isSelected()){
+            if (currentUser instanceof Restaurant) {
+                foodManagmentRestName.setText("Restaurant: " + currentUser.getName());
+                restaurantComboBox.setValue((Restaurant) currentUser);
+                restaurantComboBox.setDisable(true);
+            } else {
+                foodManagmentRestName.setText("Restaurant: All");
+                restaurantComboBox.setDisable(false);
+            }
             restaurants.setAll(customHibernate.getAllRecords(Restaurant.class));
             restaurantComboBox.setItems(restaurants);
         }
         if(foodOderTab.isSelected()){
             //clearAllFields(); //Patikrink kas cia vyksta
-            foodOrderListView.getItems().clear();
-            foodOrderListView.getItems().addAll(customHibernate.getAllRecords(FoodOrder.class));
-
-
             clients.setAll(customHibernate.getAllRecords(BasicUser.class));
             clientComboBox.setItems(clients);
 
             restaurants.setAll(customHibernate.getAllRecords(Restaurant.class));
             orderRestaurantComboBox.setItems(restaurants);
 
+            foodOrderOrderStatus.getItems().setAll(OrderStatus.values());
+
+            if (currentUser instanceof Restaurant restaurantUser) {
+                foodOrderListView.getItems().setAll(
+                        customHibernate.getFoodOrdersByRestaurantAndStatus(restaurantUser, OrderStatus.PREPARING).stream()
+                                .sorted(Comparator.comparingInt(FoodOrder::getId).reversed())
+                                .toList()
+                );
+                clientComboBox.setDisable(true);
+                orderRestaurantComboBox.setDisable(true);
+                orderNameField.setDisable(true);
+                orderPriceField.setDisable(true);
+                foodOrderCreateButton.setDisable(true);
+                foodOrderDeleteButton.setDisable(true);
+
+
+
+            }
+            else if (currentUser instanceof Driver) {
+                foodOrderListView.getItems().setAll(
+                        customHibernate.getFoodOrdersExcludingStatus(OrderStatus.COMPLETED)
+                );
+
+                clientComboBox.setDisable(true);
+                orderRestaurantComboBox.setDisable(true);
+                orderNameField.setDisable(true);
+                orderPriceField.setDisable(true);
+                foodOrderCreateButton.setDisable(true);
+                foodOrderDeleteButton.setDisable(true);
+            }
+            else {
+                foodOrderListView.getItems().setAll(
+                        customHibernate.getAllRecords(FoodOrder.class)
+                );
+            }
+        }
+        if(orderTab.isSelected()){
+            ordersUsersFoodOrders.getItems().clear();
+            ordersUsersFoodOrders.getItems().setAll(
+                    customHibernate.getAllRecords(FoodOrder.class)
+                            .stream()
+                            .sorted(Comparator.comparingInt(FoodOrder::getId).reversed())
+                            .toList()
+            );
+            orderMeniuList.getItems().clear();
+            restaurants.setAll(customHibernate.getAllRecords(Restaurant.class));
+            orderRestaurantsBox.setItems(restaurants);
+
+        }
+        if(accountTab.isSelected()){
+            accountLoginField.setText(currentUser.getLogin());
+            accountPasswordField.setText(currentUser.getPassword());
+            accountNameField.setText(currentUser.getName());
+            accountSurnameField.setText(currentUser.getSurname());
+            accountNumbField.setText(currentUser.getPhoneNumber());
+            accountAdressField.setDisable(true);
+            accountLicenseField.setDisable(true);
+            accountBDateField.setDisable(true);
+            accountVechileTypeComboBox.setDisable(true);
+            if(currentUser instanceof BasicUser){
+                accountAdressField.setDisable(false);
+                accountAdressField.setText(((BasicUser) currentUser).getAddress());
+            }
+            if(currentUser instanceof Driver){
+                accountAdressField.setDisable(false);
+                accountLicenseField.setDisable(false);
+                accountBDateField.setDisable(false);
+                accountVechileTypeComboBox.setDisable(false);
+                accountAdressField.setText(((Driver) currentUser).getAddress());
+                accountLicenseField.setText(((Driver) currentUser).getLicence());
+                accountBDateField.setValue(((Driver) currentUser).getBDate());
+                accountVechileTypeComboBox.getItems().setAll(VehicleType.values());
+                accountVechileTypeComboBox.setValue(((Driver) currentUser).getVehicleType());
+            }
         }
 
     }
@@ -210,6 +307,29 @@ public class MainForm implements Initializable {
         this.entityManagerFactory = entityManagerFactory;
         this.currentUser = user;
         this.customHibernate = new CustomHibernate(entityManagerFactory);
+        tabsPane.getTabs().clear();
+        tabsPane.getTabs().addAll(accountTab);
+
+        if (user instanceof Driver) {
+            tabsPane.getTabs().addAll(foodOderTab);
+            tabsPane.getSelectionModel().select(foodOderTab);
+
+
+        }
+        else if (user instanceof Restaurant) {
+            tabsPane.getTabs().addAll(foodManagment, foodOderTab);
+            tabsPane.getSelectionModel().select(foodManagment);
+        }
+
+        else if (user instanceof BasicUser) {
+            tabsPane.getTabs().add(orderTab);
+            tabsPane.getSelectionModel().select(orderTab);
+        }
+        else if (user instanceof User) {
+            tabsPane.getTabs().addAll(userTab, foodOderTab, ChatTab, foodManagment);
+            tabsPane.getSelectionModel().select(userTab);
+
+        }
         reloadTableData();
     }
 
@@ -320,53 +440,117 @@ public class MainForm implements Initializable {
 
     public void updateOrder(ActionEvent actionEvent) {
         FoodOrder foodOrder = foodOrderListView.getSelectionModel().getSelectedItem();
-        foodOrder.setRestaurant(restaurantComboBox.getSelectionModel().getSelectedItem());
+        foodOrder.setRestaurant(orderRestaurantComboBox.getSelectionModel().getSelectedItem());
         foodOrder.setName(orderNameField.getText());
         foodOrder.setPrice(Double.valueOf(orderPriceField.getText()));
         foodOrder.setBuyer(clientComboBox.getSelectionModel().getSelectedItem());
+        foodOrder.setOrderStatus(foodOrderOrderStatus.getSelectionModel().getSelectedItem());
         customHibernate.update(foodOrder);
         reloadTableData();
 
     }
     public void loadOrderInfo(MouseEvent mouseEvent) {
-        //pasiziiurek 9 pratybas kaip perdaryt
-        FoodOrder selectedOrder = foodOrderListView.getSelectionModel().getSelectedItem();
-        if(selectedOrder != null){
+        @SuppressWarnings("unchecked")
+        ListView<FoodOrder> source =
+                (ListView<FoodOrder>) mouseEvent.getSource();
+
+        FoodOrder selectedOrder = source.getSelectionModel().getSelectedItem();
+        if (selectedOrder != null) {
             orderNameField.setText(selectedOrder.getName());
             orderPriceField.setText(String.valueOf(selectedOrder.getPrice()));
             clientComboBox.setValue(selectedOrder.getBuyer());
             orderRestaurantComboBox.setValue(selectedOrder.getRestaurant());
+            foodOrderOrderStatus.setValue(selectedOrder.getOrderStatus());
 
             orderCuisineListView.getItems().clear();
-            orderCuisineListView.getItems().addAll(selectedOrder.getCuisineList());
+            orderCuisineListView.getItems().setAll(
+                    customHibernate.getCuisinesForOrder(selectedOrder.getId())
+            );
         }
     }
-    //</editor-fold>
-    private  void clearAllFields(){
-        filterLogin.clear();
-        filterName.clear();
-        filterSurname.clear();
-        filterAddress.clear();
-        filterPhoneNum.clear();
-        deleteUserIDField.clear();
-        chatTextField.clear();
-        chatUserNameField.clear();
-        chatIdField.clear();
-        cuisineNameField.clear();
-        cuisineIngridentsArea.clear();
-        cuisinePriceField.clear();
-        cuisineNameFilterField.clear();
-        cuisinePriceFilterField.clear();
-        cuisineIdField.clear();
-        orderNameField.clear();
-        orderPriceField.clear();
-    }
-
-
     public void filterOrder(ActionEvent actionEvent) {
         List<FoodOrder> filteredOrders = customHibernate.getFoodOrderByCredentials(orderNameFilterField.getText(), orderPriceFilterField.getText());
         foodOrderListView.getItems().clear();
         foodOrderListView.getItems().addAll(filteredOrders);
 
     }
+    //</editor-fold>
+
+    //<editor-fold desc="User order Tab Functionality"> //ctr alt t
+    public void OrderMakeFoodOrder(ActionEvent actionEvent) {
+        if (orderRestaurantsBox.getValue() == null || orderList.getItems().isEmpty()) {
+            // čia gali išmesti alert'ą, kad reikia pasirinkti restoraną ir patiekalus
+            return;
+        }
+
+        Restaurant restaurant = orderRestaurantsBox.getValue();
+
+        BasicUser buyer = (BasicUser) currentUser;   // jei currentUser tikrai BasicUser
+
+        List<Cuisine> chosenDishes = new ArrayList<>(orderList.getItems());
+        double total = chosenDishes.stream()
+                .mapToDouble(Cuisine::getPrice)
+                .sum();
+
+        FoodOrder order = new FoodOrder();
+        order.setName("Order_" + System.currentTimeMillis());
+        order.setPrice(total);
+        order.setBuyer(buyer);
+        order.setRestaurant(restaurant);
+        order.setCuisineList(chosenDishes);
+        order.setOrderStatus(OrderStatus.PREPARING);  // arba koks ten tavo pradinis statusas
+
+        customHibernate.create(order);
+
+        // išvalom UI
+        orderList.getItems().clear();
+        recalcOrderCost();
+        reloadTableData();
+    }
+
+    public void LoadMeniu(ActionEvent actionEvent) {
+        List<Cuisine> foodOrders = customHibernate.getCuisinesByRestaurant(orderRestaurantsBox.getValue());
+        orderMeniuList.getItems().clear();
+        orderMeniuList.getItems().addAll(foodOrders);
+    }
+
+    public void addDishToOrder(MouseEvent mouseEvent) {
+        Cuisine selected = orderMeniuList.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            orderList.getItems().add(selected);
+            recalcOrderCost();
+        }
+    }
+    private void recalcOrderCost() {
+        double total = orderList.getItems().stream()
+                .mapToDouble(Cuisine::getPrice)
+                .sum();
+        orderCost.setText(String.valueOf(total));
+    }
+
+
+    //</editor-fold>
+    public void SaveUserAccount(ActionEvent actionEvent) {
+        currentUser.setLogin(accountLoginField.getText());
+        currentUser.setPassword(accountPasswordField.getText());
+        currentUser.setName(accountNameField.getText());
+        currentUser.setSurname(accountSurnameField.getText());
+        currentUser.setPhoneNumber(accountNumbField.getText());
+        currentUser.setDateUpdated(LocalDateTime.now());
+        if(currentUser instanceof BasicUser){
+            ((BasicUser) currentUser).setAddress(accountAdressField.getText());
+        }
+        if(currentUser instanceof Driver){
+            ((Driver) currentUser).setAddress(accountAdressField.getText());
+            ((Driver) currentUser).setLicence(accountLicenseField.getText());
+            ((Driver) currentUser).setBDate(accountBDateField.getValue());
+            ((Driver) currentUser).setVehicleType(accountVechileTypeComboBox.getValue());
+        }
+        customHibernate.update(currentUser);
+        reloadTableData();
+    }
+
+
+
+
 }

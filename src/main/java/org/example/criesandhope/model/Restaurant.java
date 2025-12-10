@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -19,8 +20,12 @@ public class Restaurant extends BasicUser {
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<FoodOrder> foodOrders;
 
-    public Restaurant(String login, String password, String name, String surname, String phoneNumber, String address) {
-        super(login, password, name, surname, phoneNumber, address);
+//    public Restaurant(String login, String password, String name, String surname, String phoneNumber, String address) {
+//        super(login, password, name, surname, phoneNumber, address);
+//    }
+
+    public Restaurant(String login, String password, String name, String surname, String phoneNumber, LocalDateTime dateCreated, LocalDateTime dateUpdated, String address) {
+        super(login, password, name, surname, phoneNumber, dateCreated, dateUpdated, address);
     }
 
     @Override
