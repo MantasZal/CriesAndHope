@@ -43,7 +43,7 @@ public class CustomHibernate extends GenericHibernate {
         }
         return user;
     }
-    public List<FoodOrder> getFoodOrdersByRestaurantAndStatus(Restaurant restaurant, OrderStatus status) {
+    public List<FoodOrder> getFoodOrdersByRestaurantAndExcludingStatus(Restaurant restaurant, OrderStatus status) {
         List<FoodOrder> list = new ArrayList<>();
         try {
             entityManager = entityManagerFactory.createEntityManager();
@@ -57,7 +57,7 @@ public class CustomHibernate extends GenericHibernate {
                     .where(
                             cb.and(
                                     cb.equal(root.get("restaurant").get("id"), restaurant.getId()),
-                                    cb.equal(root.get("orderStatus"), status)
+                                    cb.notEqual(root.get("orderStatus"), status)
                             )
                     )
                     .orderBy(cb.desc(root.get("id"))); // newest first
@@ -109,6 +109,52 @@ public class CustomHibernate extends GenericHibernate {
 
         } catch (Exception e) {
             standartDialogs.errorDialog("Could not get food orders excluding status: " + e.getMessage());
+        }
+        return list;
+    }
+    public List<Chat> getChatsForOrder(FoodOrder order) {
+        List<Chat> list = new ArrayList<>();
+        try {
+            entityManager = entityManagerFactory.createEntityManager();
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<Chat> query = cb.createQuery(Chat.class);
+            Root<Chat> root = query.from(Chat.class);
+
+            query.select(root)
+                    .where(cb.equal(root.get("foodOrder").get("id"), order.getId()))
+                    .orderBy(cb.asc(root.get("createdAt")));
+
+            list = entityManager.createQuery(query).getResultList();
+        } catch (Exception e) {
+            standartDialogs.errorDialog("Could not load chat messages: " + e.getMessage());
+        } finally {
+            if (entityManager != null) entityManager.close();
+        }
+        return list;
+    }
+    public List<FoodOrder> getActiveOrdersForBasicUser(BasicUser user) {
+        List<FoodOrder> list = new ArrayList<>();
+        try {
+            entityManager = entityManagerFactory.createEntityManager();
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<FoodOrder> query = cb.createQuery(FoodOrder.class);
+            Root<FoodOrder> root = query.from(FoodOrder.class);
+
+            query.select(root)
+                    .where(
+                            cb.and(
+                                    cb.equal(root.get("buyer").get("id"), user.getId()),
+                                    cb.notEqual(root.get("orderStatus"), OrderStatus.COMPLETED)
+                            )
+                    )
+                    .orderBy(cb.desc(root.get("id")));
+
+            list = entityManager.createQuery(query).getResultList();
+
+        } catch (Exception e) {
+            standartDialogs.errorDialog("Could not load active user orders: " + e.getMessage());
+        } finally {
+            if (entityManager != null) entityManager.close();
         }
         return list;
     }

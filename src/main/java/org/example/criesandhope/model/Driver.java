@@ -1,8 +1,6 @@
 package org.example.criesandhope.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +8,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -20,6 +19,8 @@ import java.time.LocalDateTime;
 public class Driver extends BasicUser {
     private String licence;
     private LocalDate bDate;
+    @OneToMany(mappedBy = "driver", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Chat> chats;
     @Enumerated(EnumType.STRING)
     private VehicleType vehicleType;
 

@@ -19,6 +19,8 @@ public class Restaurant extends BasicUser {
     protected List<Cuisine> menu;
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<FoodOrder> foodOrders;
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Chat> chats;
 
 //    public Restaurant(String login, String password, String name, String surname, String phoneNumber, String address) {
 //        super(login, password, name, surname, phoneNumber, address);

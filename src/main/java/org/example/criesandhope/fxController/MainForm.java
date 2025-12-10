@@ -204,6 +204,7 @@ public class MainForm implements Initializable {
             chatListView.getItems().addAll(customHibernate.getAllRecords(Chat.class));
             restaurants.setAll(customHibernate.getAllRecords(Restaurant.class));
             restaurantComboBox.setItems(restaurants);
+            setupChatCellFactory();
 
         }
         if(foodManagment.isSelected()){
@@ -230,7 +231,7 @@ public class MainForm implements Initializable {
 
             if (currentUser instanceof Restaurant restaurantUser) {
                 foodOrderListView.getItems().setAll(
-                        customHibernate.getFoodOrdersByRestaurantAndStatus(restaurantUser, OrderStatus.PREPARING).stream()
+                        customHibernate.getFoodOrdersByRestaurantAndExcludingStatus(restaurantUser, OrderStatus.COMPLETED).stream()
                                 .sorted(Comparator.comparingInt(FoodOrder::getId).reversed())
                                 .toList()
                 );
@@ -302,6 +303,52 @@ public class MainForm implements Initializable {
             }
         }
 
+    }
+    private void setupChatCellFactory() {
+        chatListView.setCellFactory(listView -> new ListCell<Chat>() {
+            @Override
+            protected void updateItem(Chat chat, boolean empty) {
+                super.updateItem(chat, empty);
+
+                if (empty || chat == null) {
+                    setText(null);
+                    return;
+                }
+
+                // Kas parašė?
+                String role;
+                if (chat.getDriver() != null) {
+                    role = "Driver";
+                } else if (chat.getRestaurant() != null) {
+                    role = "Restaurant";
+                } else if (chat.getCustomer() != null) {
+                    role = "User";
+                } else {
+                    role = "Unknown";
+                }
+
+                String orderName = (chat.getFoodOrder() != null && chat.getFoodOrder().getName() != null)
+                        ? chat.getFoodOrder().getName()
+                        : "Unknown order";
+
+                String time = (chat.getCreatedAt() != null)
+                        ? chat.getCreatedAt().toString()
+                        : "-";
+
+                // Galutinis tekstas adminui
+                String line = String.format(
+                        "[%s][%s] [%s] %s: %s  (%s)",
+                        chat.getId(),
+                        orderName,          // užsakymo pavadinimas
+                        role,               // Driver / Restaurant / User
+                        chat.getName(),     // siuntėjo vardas
+                        chat.getChatText(), // žinutė
+                        time                // kada
+                );
+
+                setText(line);
+            }
+        });
     }
     public void setData(EntityManagerFactory entityManagerFactory, User user) {
         this.entityManagerFactory = entityManagerFactory;
@@ -445,6 +492,17 @@ public class MainForm implements Initializable {
         foodOrder.setPrice(Double.valueOf(orderPriceField.getText()));
         foodOrder.setBuyer(clientComboBox.getSelectionModel().getSelectedItem());
         foodOrder.setOrderStatus(foodOrderOrderStatus.getSelectionModel().getSelectedItem());
+        OrderStatus newStatus = foodOrderOrderStatus.getSelectionModel().getSelectedItem();
+        if (newStatus == OrderStatus.DELIVERED) {
+            List<Chat> chats = foodOrder.getChats(); // visi su užsakymu susieti chat'ai
+
+            if (chats != null) {
+                for (Chat c : chats) {
+                    c.setActive(false);
+                    customHibernate.update(c);
+                }
+            }
+        }
         customHibernate.update(foodOrder);
         reloadTableData();
 
@@ -527,6 +585,13 @@ public class MainForm implements Initializable {
                 .sum();
         orderCost.setText(String.valueOf(total));
     }
+    public void DeleteDishFromOrder(MouseEvent mouseEvent) {
+        Cuisine selected = orderList.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            orderList.getItems().remove(selected);
+            recalcOrderCost();
+        }
+    }
 
 
     //</editor-fold>
@@ -551,6 +616,23 @@ public class MainForm implements Initializable {
     }
 
 
+    public void GoToChat(ActionEvent actionEvent) {
+        try {
+            FXMLLoader loader = new FXMLLoader(HelloApplication.class.getResource("chat-form.fxml"));
+            Parent parent = loader.load();
+
+            ChatForm chatForm = loader.getController();
+            chatForm.setData(entityManagerFactory, currentUser);
+
+            Stage stage = new Stage();
+            stage.setTitle("Chat");
+            stage.setScene(new Scene(parent));
+            stage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 
 }
